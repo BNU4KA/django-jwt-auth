@@ -19,7 +19,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\" : \"malashevich2002@gmail.com\",\r\n    \"username\" : \"bnu4ka\",\r\n    \"first_name\": \"mikita\",\r\n    \"last_name\": \"malashevich\",\r\n    \"password\" : \"qweasdxzc!@#\",\r\n    \"terms_and_condition\" : \"True\"\r\n}",
+					"raw": "{\r\n    \"email\" : \"malashevich2002@gmail.com\",\r\n    \"username\" : \"bnu4ka\",\r\n    \"first_name\": \"mikita\",\r\n    \"last_name\": \"malashevich\",\r\n    \"password\" : \"qweasdxzc!@#\"}",
 					"options": {
 						"raw": {
 							"language": "json"

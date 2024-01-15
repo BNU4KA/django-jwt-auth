@@ -4,46 +4,43 @@ from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 # Custom user manager class
 class MyUserManager(BaseUserManager):
-    def create_user(self, username, first_name, last_name, email, terms_and_condition, password=None):
-        """
-        Creates and saves a User with the given username, first_name, last_name, email, terms_and_condition and password.
-
-        """
+    def create_user(self, username, first_name, last_name, email, password=None, role=2, is_admin=False):
         if not email:
             raise ValueError("Users must have an email address")
+        if not password:
+            raise ValueError("Users must have password")
+        if not role:
+            raise ValueError("Users must have role")
+        if not is_admin:
+            raise ValueError("Users must have is_admin")
 
         user = self.model(
             email=self.normalize_email(email),
             username=username,
             first_name=first_name,
             last_name=last_name,
-            terms_and_condition=terms_and_condition,
+            role=role,
+            is_admin=is_admin,
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, first_name, last_name, email, terms_and_condition, password=None):
-        """
-        Creates and saves a superuser with the given username, first_name, last_name, email, terms_and_condition and password.
-
-        """
+    def create_superuser(self, username, first_name, last_name, email, password=None):
         user = self.create_user(
             username=username,
             first_name=first_name,
             last_name=last_name,
             email=email,
             password=password,
-            terms_and_condition=terms_and_condition,
         )
         user.is_admin = True
+        user.role = 1
         user.save(using=self._db)
         return user
 
 # Custom User Model
-
-
 class MyUser(AbstractBaseUser):
     email = models.EmailField(
         verbose_name="Email",
@@ -53,10 +50,10 @@ class MyUser(AbstractBaseUser):
     username = models.CharField(verbose_name="username", max_length=200)
     first_name = models.CharField(verbose_name="firstname", max_length=200)
     last_name = models.CharField(verbose_name="lastname", max_length=200)
-    terms_and_condition = models.BooleanField()
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    role = models.IntegerField(default=1)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -65,7 +62,7 @@ class MyUser(AbstractBaseUser):
 
     USERNAME_FIELD = "email"
     # It will be take when you will create a new superuser or user
-    REQUIRED_FIELDS = ["username", "first_name", "last_name", "terms_and_condition"]
+    REQUIRED_FIELDS = ["username", "first_name", "last_name", "is_admin", "role"]
 
     def __str__(self):
         return self.email
