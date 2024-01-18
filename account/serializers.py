@@ -4,6 +4,7 @@ from django.utils.encoding import smart_str, force_bytes, DjangoUnicodeDecodeErr
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from account.utils import SendEmail
+from django.db import models
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -12,7 +13,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = ["username", "first_name", "last_name", "email", "password", "is_admin", "role"]
         extra_kwargs = {"password": {"write_only": True}}
 
-    # create a user
     def create(self, validated_data):
         return MyUser.objects.create_user(**validated_data)
 
@@ -24,14 +24,23 @@ class UserLoginSerializer(serializers.ModelSerializer):
         fields = ['email', 'password']
 
 
-# User Profile Serializer class
 class UserProfileSerializer(serializers.ModelSerializer):
+    # data = MyUser.objects.all()
     class Meta:
         model = MyUser
         fields = ['id', 'username', 'first_name', 'last_name', 'email', 'role', 'is_admin']
 
+class UserProfilesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MyUser
+        # fields = "__all__"
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'role', 'is_admin']
 
-# User Change Password Serializer class
+class UpdateUserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MyUser
+        fields = ['username', 'first_name', 'last_name', 'email', 'role']
+
 class UserChangePasswordSerializer(serializers.Serializer):
     password = serializers.CharField(
         max_length=255, style={'input_type': 'password'}, write_only=True)
@@ -54,7 +63,6 @@ class UserChangePasswordSerializer(serializers.Serializer):
         return attrs
 
 
-# Send password reset email serializer class
 class SendPasswordResetEmailSerializer(serializers.Serializer):
     email = serializers.CharField(max_length=255)
 
@@ -82,7 +90,6 @@ class SendPasswordResetEmailSerializer(serializers.Serializer):
             raise serializers.ValidationError("You are not Registered User")
 
 
-# User password reset email serializer class
 class UserPasswordResetSerializer(serializers.Serializer):
     password = serializers.CharField(
         max_length=255, style={'input_type': 'password'}, write_only=True)
@@ -103,7 +110,6 @@ class UserPasswordResetSerializer(serializers.Serializer):
                     "Password and Confirm Password doesn't match")
             id = smart_str(urlsafe_base64_decode(user_id))
             user = MyUser.objects.get(id=id)
-            # Checking if user token is valid or exist or not
             if not PasswordResetTokenGenerator().check_token(user, token):
                 raise serializers.ValidationError(
                     'Token is not Valid or Expired')

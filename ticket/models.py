@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, Group
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 
 class MyUserManager(BaseUserManager):
@@ -23,19 +23,6 @@ class MyUserManager(BaseUserManager):
         )
 
         user.set_password(password)
-        user.save(using=self._db)
-        return user
-    
-    def update_user(self, username, first_name, last_name, email, password=None, role=2, is_admin=False):
-        user = self.model(
-            email=email,
-            username=username,
-            first_name=first_name,
-            last_name=last_name,
-            role=role,
-            is_admin=is_admin,
-        )
-
         user.save(using=self._db)
         return user
 
@@ -89,8 +76,3 @@ class MyUser(AbstractBaseUser):
     def is_staff(self):
         "Is the user a member of staff?"
         return self.is_admin
-    def allowed_methods(self):
-        self.http_method_names.append("patch")
-        return [method.upper() for method in self.http_method_names
-            if hasattr(self, method)]
-    

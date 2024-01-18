@@ -1,5 +1,5 @@
 """
-URL configuration for django_jwt_authentication project.
+URL configuration for authentication project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.2/topics/http/urls/
@@ -21,8 +21,3 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/user/', include('account.urls'))
 ]
-
-
-# Admin email and password
-# Email: alaminbhuyan321@gmail.com
-# Password: admin
